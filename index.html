@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Cuatro Pilares del Saber Humano</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            background-color: var(--light-color);
+            z-index: 1;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        .slide-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .slide-content {
+            max-width: 800px;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            width: 90%;
+        }
+        
+        .pillar-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 200px;
+            transition: transform 0.3s ease;
+        }
+        
+        .pillar-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .pillar-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .pillar-keyword {
+            font-style: italic;
+            color: var(--accent-color);
+        }
+        
+        .pillars-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        /* Nuevo diseño de pirámide moderno */
+        .pyramid-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto;
+            position: relative;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .pyramid-layer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            position: relative;
+            opacity: 0;
+            transition: all 0.5s ease;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            overflow: hidden;
+            height: 0;
+            margin-bottom: 5px;
+        }
+        
+        .layer-1 {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
+            width: 100%;
+            height: 100px;
+        }
+        
+        .layer-2 {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9));
+            width: 85%;
+            height: 80px;
+        }
+        
+        .layer-3 {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+            width: 70%;
+            height: 60px;
+        }
+        
+        .layer-4 {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.9), rgba(142, 68, 173, 0.9));
+            width: 55%;
+            height: 40px;
+        }
+        
+        .pyramid-layer.active {
+            opacity: 1;
+        }
+        
+        .pyramid-label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            padding: 0 10px;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            z-index: 10;
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin: 0 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .fullscreen-btn {
+            background: var(--primary-color);
+        }
+        
+        .nav-btn:hover {
+            background: var(--accent-color);
+            transform: scale(1.1);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: var(--secondary-color);
+            z-index: 10;
+            transition: width 0.3s ease;
+        }
+        
+        .quote {
+            font-style: italic;
+            padding: 1rem;
+            border-left: 4px solid var(--secondary-color);
+            margin: 1rem 0;
+            background: rgba(255,255,255,0.7);
+            text-align: left;
+        }
+        
+        .quote-author {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        ul, ol {
+            text-align: left;
+            max-width: 600px;
+            margin: 1rem auto;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Mejoras para móviles */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 1rem;
+                justify-content: flex-start;
+                padding-top: 4rem;
+            }
+            
+            .slide-title {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .slide-content {
+                font-size: 1rem;
+            }
+            
+            .pillar-card {
+                width: 150px;
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            
+            .pyramid-container {
+                height: 280px;
+                margin: 1rem auto;
+            }
+            
+            .layer-1 {
+                height: 80px;
+            }
+            
+            .layer-2 {
+                height: 65px;
+            }
+            
+            .layer-3 {
+                height: 50px;
+            }
+            
+            .layer-4 {
+                height: 35px;
+            }
+            
+            .navigation {
+                bottom: 10px;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                margin: 0 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .slide-title {
+                font-size: 1.5rem;
+            }
+            
+            .pillar-card {
+                width: 130px;
+                font-size: 0.9rem;
+            }
+            
+            .pyramid-container {
+                height: 220px;
+            }
+            
+            .layer-1 {
+                height: 70px;
+                font-size: 0.8rem;
+            }
+            
+            .layer-2 {
+                height: 55px;
+                font-size: 0.8rem;
+            }
+            
+            .layer-3 {
+                height: 40px;
+                font-size: 0.7rem;
+            }
+            
+            .layer-4 {
+                height: 30px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+    
+    <div class="presentation-container">
+        <!-- Slide 1: Introducción -->
+        <div class="slide active">
+            <h1 class="slide-title">Los Cuatro Pilares del Saber Humano</h1>
+            <div class="slide-content">
+                <p>Un planteamiento de avanzada inspirado en la obra y el pensamiento de los fundadores de nuestra institución: Dr. Serge Raynaud de la Ferrière y su exégeta Dr. David Juan Ferriz Olivares.</p>
+                
+                <div class="quote">
+                    "La persona es más evolucionada debido a la más grande extensión de su horizonte, y estará siempre en condición de comprender a aquellos que lo son menos, mientras que lo contrario no es posible."
+                    <div class="quote-author">- Jean Hering</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 2: Modalidades del pensamiento -->
+        <div class="slide">
+            <h1 class="slide-title">Modalidades del Pensamiento</h1>
+            <div class="slide-content">
+                <p>Estas son modalidades del pensamiento que todos los seres humanos tenemos, independientemente de nuestra profesión o nivel académico.</p>
+                
+                <div class="pillars-container">
+                    <div class="pillar-card">
+                        <div class="pillar-title">Ciencia</div>
+                        <div class="pillar-keyword">Investigación</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Filosofía</div>
+                        <div class="pillar-keyword">Trascendencia</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Arte</div>
+                        <div class="pillar-keyword">Creación</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Didáctica</div>
+                        <div class="pillar-keyword">Transmisión</div>
+                    </div>
+                </div>
+                
+                <p>Para abordar cada uno de estos pilares no se necesita tener una licenciatura. Son capacidades humanas fundamentales.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Pirámide de necesidades - NUEVO DISEÑO -->
+        <div class="slide">
+            <h1 class="slide-title">Del Sutil a lo Denso</h1>
+            <div class="slide-content">
+                <p>Los seres humanos vamos de lo sutil a lo denso. En una pirámide de necesidades:</p>
+                
+                <div class="pyramid-container">
+                    <div class="pyramid-layer layer-1">
+                        <div class="pyramid-label">Pensamiento (actividad que nunca cesa)</div>
+                    </div>
+                    <div class="pyramid-layer layer-2">
+                        <div class="pyramid-label">Aire (25,000-26,000 respiraciones diarias)</div>
+                    </div>
+                    <div class="pyramid-layer layer-3">
+                        <div class="pyramid-label">Líquido (60% de nuestro cuerpo)</div>
+                    </div>
+                    <div class="pyramid-layer layer-4">
+                        <div class="pyramid-label">Sólido (lo que menos necesitamos)</div>
+                    </div>
+                </div>
+                
+                <p>En este sentido debemos educar el pensamiento, que es nuestra actividad más constante y sutil.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Cultura -->
+        <div class="slide">
+            <h1 class="slide-title">Cultura y Visión de Vida</h1>
+            <div class="slide-content">
+                <p>El Dr. David Ferriz Olivares define:</p>
+                
+                <div class="quote">
+                    "A mayor cultura, mayor visión de vida."
+                    <div class="quote-author">- Dr. David Ferriz Olivares</div>
+                </div>
+                
+                <p>La cultura (del latín <em>cultus</em>, cultivar):</p>
+                <ul>
+                    <li>Es la formación del hombre, su mejoramiento y perfeccionamiento</li>
+                    <li>Es el conjunto de modos de vivir y pensar cultivados y pulimentados</li>
+                    <li>Es la educación del hombre como tal, la capacidad de formar al hombre verdadero</li>
+                    <li>Es la búsqueda y realización que el hombre hace de sí mismo</li>
+                </ul>
+                
+                <p>El secreto de la verdadera cultura es saber hacer productivo aquello que uno ha asimilado.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 5: Ciencia -->
+        <div class="slide">
+            <h1 class="slide-title">Ciencia: Investigación</h1>
+            <div class="slide-content">
+                <p>Según el Dr. David Juan Ferriz Olivares: "Ciencia en el sentido ilimitado del Saber".</p>
+                <p>La ciencia necesita complementarse con la filosofía en sentido trascendental.</p>
+                
+                <p>Características de la ciencia:</p>
+                <div class="pillars-container">
+                    <div class="pillar-card">
+                        <div class="pillar-title">Objetividad</div>
+                        <div>Explicar los hechos como son, independientes de su valor emocional o comercial</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Racionalidad</div>
+                        <div>Formada por conceptos, juicios y raciocinios, no por sensaciones o imágenes</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Sistematicidad</div>
+                        <div>Sistema de ideas conectadas lógicamente entre sí</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Metodicidad</div>
+                        <div>Procedimientos planeados mediante métodos lógicos</div>
+                    </div>
+                </div>
+                
+                <p>No confundir ciencia con tecnología. La ciencia busca leyes profundas, la tecnología soluciona problemas inmediatos.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Filosofía -->
+        <div class="slide">
+            <h1 class="slide-title">Filosofía: Trascendencia</h1>
+            <div class="slide-content">
+                <p>El espíritu filosófico es innato en esencia. Filosofar es:</p>
+                <ul>
+                    <li>Colocar en movimiento nuestro ser</li>
+                    <li>Cuestionarse, buscar, indagar, escuchar</li>
+                    <li>Atreverse a responder formulando hipótesis</li>
+                    <li>Penetrar en la esencia de la realidad</li>
+                </ul>
+                
+                <div class="quote">
+                    "Filosofar no es de ninguna manera enseñar a aprender una doctrina sino asumir una manera de Ser, hacer un acto de fe. La filosofía es por excelencia el acto de la existencia."
+                </div>
+                
+                <p>La ciencia por sí misma no puede dar las explicaciones últimas. Requiere del concurso de otros saberes.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 7: Arte y Didáctica -->
+        <div class="slide">
+            <h1 class="slide-title">Arte y Didáctica</h1>
+            <div class="slide-content">
+                <div class="pillars-container">
+                    <div class="pillar-card">
+                        <div class="pillar-title">Arte</div>
+                        <div class="pillar-keyword">Creación</div>
+                        <div>Expresión de la belleza y la verdad a través de formas sensibles</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Didáctica</div>
+                        <div class="pillar-keyword">Transmisión</div>
+                        <div>Arte de enseñar, de comunicar el saber de manera efectiva</div>
+                    </div>
+                </div>
+                
+                <p>El Dr. Serge Raynaud de la Ferrière define en la Magna Fraternitas Universalis (MFU) estos cuatro pilares como fundamentales para la Nueva Era.</p>
+                
+                <p>La estructura interna de la cultura en la Nueva Era requiere de la unidad intrínseca de sus diversas ramas, especialmente de la ciencia, el arte, la filosofía y la didáctica.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Misión de la Universidad -->
+        <div class="slide">
+            <h1 class="slide-title">La Misión de la Universidad</h1>
+            <div class="slide-content">
+                <div class="quote">
+                    "La Universidad tiene que formar, sobre todo, un Ser Humano."
+                    <div class="quote-author">- José Ortega y Gasset</div>
+                </div>
+                
+                <p>Comúnmente se piensa que la universidad es una fábrica de técnicos o profesionales, pero necesita recuperar su verdadera misión.</p>
+                
+                <p>La universidad debe crear espacios comunitarios que fomenten los cuatro pilares del saber.</p>
+                
+                <p>El pensamiento es creación. Todo lo que existe en el mundo de la manifestación es una expresión del pensamiento. Por eso debemos educarlo y alimentarlo.</p>
+            </div>
+        </div>
+        
+        <!-- Slide 9: Nueva Era de Saber -->
+        <div class="slide">
+            <h1 class="slide-title">La Nueva Era de Saber</h1>
+            <div class="slide-content">
+                <p>Estamos en los albores de la Era Acuariana, una Era de Saber donde se da un cambio de "creer" a "saber".</p>
+                
+                <p>Los medios de comunicación deberían ayudar a reflexionar, no a simplificar o manipular. Deben ser comunitarios, participativos, siguiendo la visión del Dr. Serge Raynaud sobre la colectivización de la búsqueda.</p>
+                
+                <p>El Dr. David Ferriz Olivares desarrolla una metodología inspirada en la Yoga del Saber (Jnana Yoga) con cuatro estados fundamentales:</p>
+                
+                <div class="pillars-container">
+                    <div class="pillar-card">
+                        <div class="pillar-title">Buena Voluntad</div>
+                        <div>Destacar lo positivo de los seres</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Reflexión</div>
+                        <div>Guiar a pensar, no simplificar</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Sutilidad de Espíritu</div>
+                        <div>Lenguaje adecuado y buenas relaciones humanas</div>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-title">Percepción de la Realidad</div>
+                        <div>Visión integral del mundo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 10: Preguntas y cierre -->
+        <div class="slide">
+            <h1 class="slide-title">Reflexiones Finales</h1>
+            <div class="slide-content">
+                <p>Preguntas para reflexionar:</p>
+                
+                <ol>
+                    <li>¿Cómo los 4 Pilares del Saber se unen entre sí?</li>
+                    <li>¿Cómo pueden colaborar las Universidades a fortalecer el Humanismo en la sociedad?</li>
+                    <li>¿Cómo podemos estimular el sentido de Humanismo en nuestra Sociedad a través de estos pilares?</li>
+                </ol>
+                
+                <div class="quote">
+                    "Por ciencia es necesario entender el conjunto de conocimientos y no el dominio de algunos privilegiados. Igualmente por principio Espiritual no hay que sobreentender la renta de algunas sectas religiosas. Hay que salir del dogmatismo tanto religioso como científico y labrar un nuevo camino en esta Nueva Era Acuariana que necesita la colaboración de todos."
+                    <div class="quote-author">- Dr. Serge Raynaud de la Ferrière</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="navigation">
+        <button class="nav-btn prev-btn">←</button>
+        <button class="nav-btn fullscreen-btn" title="Pantalla completa">⛶</button>
+        <button class="nav-btn next-btn">→</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const fullscreenBtn = document.querySelector('.fullscreen-btn');
+            const progressBar = document.querySelector('.progress-bar');
+            let currentSlide = 0;
+            
+            // Mostrar la primera diapositiva
+            showSlide(currentSlide);
+            
+            // Event listeners para los botones
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // Navegación con teclado
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    prevSlide();
+                } else if (e.key === 'f' || e.key === 'F') {
+                    toggleFullscreen();
+                } else if (e.key === 'Escape') {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+            
+            // Función para mostrar una diapositiva específica
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                slides[index].classList.add('active');
+                
+                // Actualizar barra de progreso
+                const progress = ((index + 1) / slides.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Animar la pirámide cuando sea la diapositiva correspondiente
+                if (index === 2) {
+                    animatePyramid();
+                }
+            }
+            
+            // Función para animar la pirámide
+            function animatePyramid() {
+                const pyramidLayers = document.querySelectorAll('.pyramid-layer');
+                pyramidLayers.forEach((layer, index) => {
+                    setTimeout(() => {
+                        layer.style.opacity = '1';
+                    }, index * 300);
+                });
+            }
+            
+            // Función para ir a la siguiente diapositiva
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            // Función para ir a la diapositiva anterior
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+            
+            // Función para pantalla completa
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        alert(`Error al intentar pantalla completa: ${err.message}`);
+                    });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            }
+            
+            // Detectar cambios en el tamaño de la pantalla para ajustar la pirámide
+            window.addEventListener('resize', function() {
+                if (currentSlide === 2) {
+                    const pyramidLayers = document.querySelectorAll('.pyramid-layer');
+                    pyramidLayers.forEach(layer => {
+                        layer.style.opacity = '0';
+                    });
+                    setTimeout(animatePyramid, 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
